@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class MainViewController {
 
-    public static final String PAGE_PATH = "/framework/";
+    public static final String PAGE_PATH = "framework/";
 
     @RequestMapping("/test")
     @ResponseBody

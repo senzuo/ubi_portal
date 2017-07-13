@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!--<div th:include="framework/main/commonJs"::commonJs/>-->
+    <!-- jQuery 2.1.4 -->
+    <script src="/framework/jquery/jquery.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="/framework/jquery/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.5 -->
+    <script src="/framework/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Morris.js charts -->
+    <script src="/framework/plugins/table/bootstrap-table-niow.js"></script>
+    <script src="/framework/plugins/table/bootstrap-table-zh-CN.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/framework/adminlte/js/app.min.js"></script>
+
+    <title>index</title>
+</head>
+
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:include="framework/main/mainHeader :: header"/>
+    <div th:include="framework/main/mainLeft :: left"/>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                首页
+                <small>欢迎使用</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            </ol>
+        </section>
+    </div>
+
+
+
+    <div th:include="framework/main/mainBottom :: copyright"></div>
+
+    <div th:include="framework/main/commonStyle :: style"/>
+</div>
+</body>
+</html>

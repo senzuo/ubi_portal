@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <table class="box-table-a">
+        <caption>thyMeleaf使用教程</caption>
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">这是标题1</th>
+                <th scope="col">这是标题2</th>
+                <th scope="col">这是标题3</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            <td th:text="${user.id}">01</td>
+            <td th:text="${user.name}">朱遇平</td>
+        </tbody>
+    </table>
+
+
+    <form th:action="@{/user/view/0713getPara}" th:object="${user}" method="post" th:method="post">
+
+        <input type="text" th:field="*{id}"/>id
+        <br/>
+        <input type="text" th:field="*{name}"/>name
+
+        <input type="submit"/>
+    </form>
+</html>

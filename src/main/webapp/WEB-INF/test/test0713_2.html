@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<form action="#" th:action="@{/user/view/0713getPara}" th:object="${user}" method="post">
+    <input type="text" th:f ="id"/>id
+    <br/>
+    <input type="text" name="name"/>name
+    <input type="submit"/>
+</form>
+</html>
