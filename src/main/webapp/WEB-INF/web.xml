@@ -32,4 +32,14 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>Set Encoding</filter-name>
+        <!--包名+类名-->
+        <filter-class>com.test.commons.work.SetEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Set Encoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 </web-app>

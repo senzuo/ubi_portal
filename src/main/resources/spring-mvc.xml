@@ -86,6 +86,7 @@
         <!--&lt;!&ndash; 这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 &ndash;&gt;-->
         <!--<property name="prefix" value="/WEB-INF/"/>-->
         <!--<property name="suffix" value=".jsp"/>-->
+        <!--<property name="order" value="2"/>-->
     <!--</bean>-->
 
     <!--<bean id="authAssemblyResolver" class="com.chh.obd.ubi.portal.organization.OrganizationController" scope="singleton" />-->
