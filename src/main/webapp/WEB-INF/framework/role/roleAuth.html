@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <meta charset="utf-8"/>
+    <!--#parse("/admin/common/include.html")-->
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!--<div th:include="framework/main/commonJs"::commonJs/>-->
+    <!-- jQuery 2.1.4 -->
+    <script src="/framework/jquery/jquery.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="/framework/jquery/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.5 -->
+    <script src="/framework/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Morris.js charts -->
+    <script src="/framework/plugins/table/bootstrap-table-niow.js"></script>
+    <script src="/framework/plugins/table/bootstrap-table-zh-CN.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/framework/adminlte/js/app.min.js"></script>
+</head>
+<body>
+<div class="location">
+    当前位置：角色管理<em>></em>角色列表<em>></em>设置权限
+    <div class="main-icon">
+        <em class="icon-refresh"></em>
+    </div>
+</div>
+
+<div class="page-body">
+    <h2>为角色[<span style="font-size: 35px;color: #8820f0;">$!{role.name}</span>]设置权限</h2>
+    <br/>
+    <table border="0" cellspacing="0" cellpadding="0" class="table-list">
+        <tr>
+            <th id="moduleList" width="2%" valign="top">
+
+            </th>
+            <th width="12%" style="margin-left:10px;" valign="top">
+                <table id="authTable" border="0" cellspacing="0" cellpadding="0" class="table-list">
+
+                </table>
+                <div class="btn-box">
+                    <a href="javascript:void(0)" id="submit" class="btn btn_submit">保存</a>
+                    <a href="javascript:void(0)" id="cancel" class="btn btn_submit">取消</a>
+                </div>
+            </th>
+        </tr>
+    </table>
+</div>
+<input type="hidden" id="roleId" value="$!{role.id}"/>
+</body>
+</html>
+<style>
+    .moduleli {
+        font-size: 13px;
+        border: 1px solid #e3e3e3;
+    }
+
+    .ali {
+        display: block;
+        padding: 12px 0px 12px 32px;
+        text-align: left;
+        line-height: 20px;
+        color: #7d7d7d;
+        background-color: #e2f8ff;
+    }
+
+    .selected {
+        color: #ffffff;
+        background-color: #89bcef;
+    }
+
+    .moduleli a:hover {
+        color: #ffffff;
+        background-color: #89bcef;
+    }
+
+</style>
+<script>
+    var authModule = [];
+    $(function () {
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {roleId: $("#roleId").val()},
+            url: ctx + "/admin/role/getRoleAuthModule.json",
+            success: function (data) {
+                if (data.status == 100) {
+                    var moduleHtml = "";
+                    for (var i = 0; i < data.result.length; i++) {
+                        authModule[data.result[i].moduleCode] = data.result[i];
+                        moduleHtml += '<li class="moduleli"><a class="ali" href="javascript:void(0)" module="' + data.result[i].moduleCode + '">' + data.result[i].description + '</a></li>';
+                    }
+                    $("#moduleList").html(moduleHtml);
+                    $('.ali').click(function () {
+                        var moduleCode = $(this).attr('module');
+                        $('.ali').removeClass("selected");
+                        $(this).addClass("selected");
+                        var authHtml = '<tr><th>全选<br/><input onchange="checkAll()" id="checkAll" type="checkbox" /></th><th>权限名称</th><th>URL</th><th>AuthCode</th></tr>';
+                        var module = authModule[moduleCode];
+                        for (var i = 0; i < module.authorityList.length; i++) {
+                            var auth = module.authorityList[i];
+                            authHtml += '<tr>';
+                            authHtml += '<td><input name="auth" type="checkbox" value="' + auth.authCode + '" class="auth" ' + (auth.hasOwn == true ? "checked" : "") + '></td>';
+                            authHtml += '<td>' + auth.description + '</td>';
+                            authHtml += '<td>' + auth.url + '</td>';
+                            authHtml += '<td>' + auth.authCode + '</td>';
+                            authHtml += '</tr>';
+                        }
+                        $("#authTable").html(authHtml);
+                    });
+                    $('.ali :first').click();
+
+                    $("#cancel").click(function () {
+                        $('.ali.selected').click();
+                    });
+                    $("#submit").click(submit);
+                } else {
+                    Y.alert(data.msg);
+                }
+            },
+            error: function (err) {
+                Y.alert("通讯失败。");
+            }
+        });
+
+    });
+
+
+    function submit() {
+        var moduleCode = $('.ali.selected').attr('module');
+        var addAuthCode = new Array();
+        var removeAuthCode = new Array();
+        var authList = authModule[moduleCode].authorityList;
+        $('input:checkbox[name=auth]').each(function () {
+            var checked = $(this).attr("checked");
+            var authCode = $(this).val();
+            for (var i = 0; i < authList.length; i++) {
+                var auth = authList[i];
+                if (auth.authCode == authCode) {
+                    if (auth.hasOwn == true && checked) {
+                        continue;
+                    }
+                    if (auth.hasOwn == false && !checked) {
+                        continue;
+                    }
+                    if (auth.hasOwn == true && !checked) {
+                        removeAuthCode.push(authCode);
+                        continue;
+                    }
+                    if (auth.hasOwn == false && checked) {
+                        addAuthCode.push(authCode);
+                        continue;
+                    }
+                }
+            }
+        });
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {roleId: $("#roleId").val(),addAuthCode:addAuthCode.join(","), removeAuthCode:removeAuthCode.join(",")},
+            url: ctx + "/admin/role/editAuth.json",
+            success: function (data) {
+                if (data.status == 100) {
+                    Y.alert("保存成功");
+                } else {
+                    Y.alert(data.msg);
+                }
+            },
+            error: function (err) {
+                Y.alert("通讯失败。");
+            }
+        });
+    }
+
+    function checkAll() {
+        var checked = $("#checkAll").attr("checked");
+        if (checked) {
+            $('input:checkbox[name=auth]').attr("checked", 'true');
+        } else {
+            $('input:checkbox[name=auth]').removeAttr("checked");
+        }
+    }
+</script>
