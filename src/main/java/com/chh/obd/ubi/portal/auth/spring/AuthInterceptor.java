@@ -55,7 +55,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         String authCode = handlerMethod.getBean().getClass().getName() + "." + handlerMethod.getMethod().getName();
-        if (!authManager.checkAuth(authCode, token.getUserId())) {
+        if (!authManager.checkUserAuth(authCode, token.getUserId())) {
             if (log.isDebugEnabled()) {
                 log.debug("用户:{}无权限访问被拦截:{}", token.getUserId(), authCode);
             }
