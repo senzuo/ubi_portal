@@ -1,190 +1,399 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title></title>
-    <meta charset="utf-8"/>
-    <!--#parse("/admin/common/include.html")-->
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <!--<div th:include="framework/main/commonJs"::commonJs/>-->
-    <!-- jQuery 2.1.4 -->
-    <script src="/framework/jquery/jquery.js"></script>
-    <!-- jQuery UI 1.11.4 -->
-    <script src="/framework/jquery/jquery-ui.min.js"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
-        $.widget.bridge('uibutton', $.ui.button);
-    </script>
-    <!-- Bootstrap 3.3.5 -->
-    <script src="/framework/bootstrap/js/bootstrap.min.js"></script>
-    <!-- Morris.js charts -->
-    <script src="/framework/plugins/table/bootstrap-table-niow.js"></script>
-    <script src="/framework/plugins/table/bootstrap-table-zh-CN.js"></script>
-    <!-- AdminLTE App -->
-    <script src="/framework/adminlte/js/app.min.js"></script>
+    <title>角色管理</title>
+    <!--<div th:include="../main/commonJs.html"/>-->
+    <div th:include="framework/main/commonStyle :: style"/>
 </head>
-<body>
-<div class="location">
-    当前位置：角色管理<em>></em>角色列表<em>></em>设置权限
-    <div class="main-icon">
-        <em class="icon-refresh"></em>
-    </div>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div th:fragment="footer">
+    &copy; 2013 Footer
 </div>
+<div class="wrapper">
+    <!--<div th:include="../main/mainHeader.html"/>-->
+    <!--<div th:include="../main/mainLeft.html"/>-->
+    <div th:include="framework/main/mainHeader :: header"/>
+    <div th:include="framework/main/mainLeft :: left"/>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                角色管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li class="active">角色管理</li>
+            </ol>
+        </section>
 
-<div class="page-body">
-    <h2>为角色[<span style="font-size: 35px;color: #8820f0;">$!{role.name}</span>]设置权限</h2>
-    <br/>
-    <table border="0" cellspacing="0" cellpadding="0" class="table-list">
-        <tr>
-            <th id="moduleList" width="2%" valign="top">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">角色列表</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
 
-            </th>
-            <th width="12%" style="margin-left:10px;" valign="top">
-                <table id="authTable" border="0" cellspacing="0" cellpadding="0" class="table-list">
+                            <table id="table_role" class="table table-bordered table-hover">
+                            </table>
+                            <div id="roleToolbar" class="btn-group">
+                                <button id="role_add" onclick="showAddRoleForm()" type="button" class="btn btn-default"><span
+                                        class="glyphicon glyphicon-plus"
+                                        aria-hidden="true"></span>新增
+                                </button>
+                                <button id="role_delete" onclick="deleteMultiRole()" type="button"
+                                        class="btn btn-default"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                                </button>
+                            </div>
 
-                </table>
-                <div class="btn-box">
-                    <a href="javascript:void(0)" id="submit" class="btn btn_submit">保存</a>
-                    <a href="javascript:void(0)" id="cancel" class="btn btn_submit">取消</a>
+                        </div>
+                    </div>
                 </div>
-            </th>
-        </tr>
-    </table>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="modal fade" id="form_role_update" tabindex="-1" role="dialog" aria-labelledby="updateroleLable">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改角色信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_departmentname">角色ID</label>
+                        <input type="text" name="txt_departmentname" class="form-control"
+                               id="txt_role_id_update" placeholder="角色ID" maxlength="10"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_departmentname">角色名称</label>
+                        <input type="text" name="txt_departmentname" class="form-control"
+                               id="txt_role_name_update" placeholder="角色名称" maxlength="10"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_departmentname">角色描述</label>
+                        <input type="text" name="txt_departmentname" class="form-control"
+                               id="txt_role_desc_update" placeholder="角色描述" maxlength="10"/>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                    </button>
+                    <button type="button" onclick="updaterole()" id="btn_role_save" class="btn btn-primary"><span
+                            class="glyphicon glyphicon-floppy-disk"></span>保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 新增角色表单 -->
+    <div class="modal fade" id="form_role_add" tabindex="-1" role="dialog" aria-labelledby="addroleLable">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel">新增角色</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_departmentname">角色ID</label>
+                        <input type="text" name="txt_departmentname" class="form-control"
+                               id="txt_role_id_add" placeholder="角色ID" maxlength="10"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_parentdepartment">角色名称</label>
+                        <input type="text" name="txt_parentdepartment" class="form-control"
+                               id="txt_role_name_add" placeholder="角色名称" maxlength="18"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_parentdepartment">角色描述</label>
+                        <input type="text" name="txt_parentdepartment" class="form-control"
+                               id="txt_role_desc_add" placeholder="角色描述" maxlength="11"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                    </button>
+                    <button type="button" onclick="addRole()" id="btn_role_save" class="btn btn-primary"><span
+                            class="glyphicon glyphicon-floppy-disk"></span>保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div th:include="framework/main/mainBottom :: copyright"/>
+
 </div>
-<input type="hidden" id="roleId" value="$!{role.id}"/>
 </body>
-</html>
-<style>
-    .moduleli {
-        font-size: 13px;
-        border: 1px solid #e3e3e3;
-    }
+<!--<jsp:include page="../main/commonStyle.html"/>-->
 
-    .ali {
-        display: block;
-        padding: 12px 0px 12px 32px;
-        text-align: left;
-        line-height: 20px;
-        color: #7d7d7d;
-        background-color: #e2f8ff;
-    }
+<div th:include="framework/main/commonJs" ::commonJs/>
 
-    .selected {
-        color: #ffffff;
-        background-color: #89bcef;
-    }
-
-    .moduleli a:hover {
-        color: #ffffff;
-        background-color: #89bcef;
-    }
-
-</style>
 <script>
-    var authModule = [];
-    $(function () {
 
-        $.ajax({
-            type: "post",
-            dataType: "json",
-            data: {roleId: $("#roleId").val()},
-            url: ctx + "/admin/role/getRoleAuthModule.json",
-            success: function (data) {
-                if (data.status == 100) {
-                    var moduleHtml = "";
-                    for (var i = 0; i < data.result.length; i++) {
-                        authModule[data.result[i].moduleCode] = data.result[i];
-                        moduleHtml += '<li class="moduleli"><a class="ali" href="javascript:void(0)" module="' + data.result[i].moduleCode + '">' + data.result[i].description + '</a></li>';
-                    }
-                    $("#moduleList").html(moduleHtml);
-                    $('.ali').click(function () {
-                        var moduleCode = $(this).attr('module');
-                        $('.ali').removeClass("selected");
-                        $(this).addClass("selected");
-                        var authHtml = '<tr><th>全选<br/><input onchange="checkAll()" id="checkAll" type="checkbox" /></th><th>权限名称</th><th>URL</th><th>AuthCode</th></tr>';
-                        var module = authModule[moduleCode];
-                        for (var i = 0; i < module.authorityList.length; i++) {
-                            var auth = module.authorityList[i];
-                            authHtml += '<tr>';
-                            authHtml += '<td><input name="auth" type="checkbox" value="' + auth.authCode + '" class="auth" ' + (auth.hasOwn == true ? "checked" : "") + '></td>';
-                            authHtml += '<td>' + auth.description + '</td>';
-                            authHtml += '<td>' + auth.url + '</td>';
-                            authHtml += '<td>' + auth.authCode + '</td>';
-                            authHtml += '</tr>';
-                        }
-                        $("#authTable").html(authHtml);
-                    });
-                    $('.ali :first').click();
-
-                    $("#cancel").click(function () {
-                        $('.ali.selected').click();
-                    });
-                    $("#submit").click(submit);
-                } else {
-                    Y.alert(data.msg);
-                }
-            },
-            error: function (err) {
-                Y.alert("通讯失败。");
-            }
-        });
-
+    $(document).ready(function () {
+        initTable();
     });
 
+    function initTable() {
+        var $table = $('#table_role');
 
-    function submit() {
-        var moduleCode = $('.ali.selected').attr('module');
-        var addAuthCode = new Array();
-        var removeAuthCode = new Array();
-        var authList = authModule[moduleCode].authorityList;
-        $('input:checkbox[name=auth]').each(function () {
-            var checked = $(this).attr("checked");
-            var authCode = $(this).val();
-            for (var i = 0; i < authList.length; i++) {
-                var auth = authList[i];
-                if (auth.authCode == authCode) {
-                    if (auth.hasOwn == true && checked) {
-                        continue;
-                    }
-                    if (auth.hasOwn == false && !checked) {
-                        continue;
-                    }
-                    if (auth.hasOwn == true && !checked) {
-                        removeAuthCode.push(authCode);
-                        continue;
-                    }
-                    if (auth.hasOwn == false && checked) {
-                        addAuthCode.push(authCode);
-                        continue;
-                    }
-                }
-            }
-        });
-
-        $.ajax({
-            type: "post",
-            dataType: "json",
-            data: {roleId: $("#roleId").val(),addAuthCode:addAuthCode.join(","), removeAuthCode:removeAuthCode.join(",")},
-            url: ctx + "/admin/role/editAuth.json",
-            success: function (data) {
-                if (data.status == 100) {
-                    Y.alert("保存成功");
-                } else {
-                    Y.alert(data.msg);
-                }
+        $table.bootstrapTable({
+            showRefresh: "true",
+            showColumns: "true",
+            toolbar: '#roleToolbar',
+            pagination: "false",
+            pageList: "[10, 20, 30, ALL]",
+            sidePagination: "server",
+            url: "/role/getAllRole",
+            dataField: "data.datas",
+            pageSize: "10",
+            clickToSelect: true,
+            queryParamsType: "limit",
+            queryParams: function (params) {
+                params.radmon = Math.random();
+                params.sort = "id,desc";
+                return params;
             },
-            error: function (err) {
-                Y.alert("通讯失败。");
+            columns: [
+                {
+                    field: 'id',
+                    title: '角色ID',
+                    align: 'center',
+                    class: 'col-md-1',
+                    valign: 'middle'
+                }, {
+                    field: 'name',
+                    title: '角色昵称',
+                    align: 'center',
+                    class: 'col-md-2',
+                    valign: 'middle'
+                }, {
+                    field: 'description',
+                    title: '描述',
+                    align: 'center',
+                    class: 'col-md-3',
+                    valign: 'middle'
+                }, {
+                    field: 'option',
+                    align: 'center',
+                    events: {
+                        'click .addUser': function (e, value, row, index) {
+                            addUser(row.id);
+                        },
+                        'click .like': function (e, value, row, index) {
+                            showUpdateroleForm(row, index);
+                        },
+                        'click .remove': function (e, value, row, index) {
+                            deleteRole(row.id);
+                        },
+                        'click .updateAuth': function (e, value, row, index) {
+                            addUser(row.id);
+                        }
+
+                    },
+                    formatter: function (value, row, index) {
+                        return [
+
+                            '<a class="addUser" href="javascript:void(0)" title="添加用户">',
+                            '<i class="glyphicon glyphicon-piggy-bank"></i>',
+                            '</a>&nbsp;&nbsp;&nbsp;',
+                            '<a class="like" href="javascript:void(0)" title="修改">',
+                            '<span class="glyphicon glyphicon-pencil" aria-hidden="true" />',
+                            '</a>&nbsp;&nbsp;&nbsp;',
+
+                            '<a class="remove" href="javascript:void(0)" title="删除">',
+                            '<i class="glyphicon glyphicon-remove"></i>',
+                            '</a>&nbsp;&nbsp;&nbsp;',
+                            '<a class="updateAuth" href="javascript:void(0)" title="修改权限">',
+                            '<i class="glyphicon glyphicon-copy"></i>',
+                            '</a>&nbsp;&nbsp;&nbsp;'
+
+                        ].join('');
+                    },
+                    title: '操作'
+                }]
+        });
+        return $table;
+    }
+
+
+    function showUpdateroleForm(row, index) {
+        $("#txt_role_id_update").val(row.id);
+        $("#txt_role_name_update").val(row.name);
+        $("#txt_role_desc_update").val(row.description);
+//        $("#txt_role_id_update").val(index);
+        $('#form_role_update').modal().css({
+            "margin-top": function () {
+                return ($(this).height() / 3);
             }
         });
     }
 
-    function checkAll() {
-        var checked = $("#checkAll").attr("checked");
-        if (checked) {
-            $('input:checkbox[name=auth]').attr("checked", 'true');
-        } else {
-            $('input:checkbox[name=auth]').removeAttr("checked");
-        }
+    //修改角色信息
+    function updaterole() {
+        $.ajax({
+            url: "/role/" + $("#txt_role_id_update").val(),
+            type: "put",
+            dataType:"json",
+            data: {
+                name: $("#txt_role_name_update").val(),
+                desc: $("#txt_role_desc_update").val()
+            },
+            success: function (data) {
+                if (data.code != 200) {
+                    toastr.error(data.msg);
+                    return;
+                }
+                toastr.success(data.msg);
+                $("#table_role").bootstrapTable('updateRow', {
+                    index: $("#txt_role_id_update").val(),
+                    row: {
+                        name: $("#txt_role_name_update").val(),
+                        desc: $("#txt_role_desc_update").val()
+                    }
+                });
+                hideUpdateroleForm();
+            },
+            error: function (data, status) {
+                toastr.error("保存失败，请检查网络和服务器运行情况！");
+            }
+        });
     }
+
+    function hideUpdateroleForm() {
+        $('#form_role_update').modal('hide');
+        $("#txt_role_id_update").val("");
+        $("#txt_role_name_update").val("");
+        $("#txt_role_desc_update").val("");
+    }
+
+    function deleteRole(roleId) {
+//        bootalert.confirm({ message: "确认要删除选择的数据吗？" }).on(function () {
+//            $.ajax({
+//                url: "/role/" + roleId,
+//                type: "delete",
+//                success: function (data, status) {
+//                    if (status != "success") {
+//                        toastr.error("删除失败，请检查网络和服务器运行情况！");
+//                        return;
+//                    }
+//                    if (data.code != 200) {
+//                        toastr.error(data.msg);
+//                        return;
+//                    }
+//                    toastr.success(data.msg);
+//                    $("#table_role").bootstrapTable('remove', {
+//                        field: 'id',
+//                        values: !isNaN(roleId) ? [roleId] : roleId
+//                    });
+//                },
+//                error: function (data, status) {
+//                    toastr.error("删除失败，请检查网络和服务器运行情况！");
+//                }
+//            });
+//
+//        });
+        swal({
+            title: "确定删除?",
+            text: "角色如果删除数据将不能找回",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定删除",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "/role/" + roleId,
+                type: "delete",
+                success: function (data, status) {
+                    if (status != "success") {
+                        toastr.error("删除失败，请检查网络和服务器运行情况！");
+                        return;
+                    }
+                    if (data.code != 200) {
+                        toastr.error(data.msg);
+                        return;
+                    }
+                    toastr.success(data.msg);
+                    $("#table_role").bootstrapTable('remove', {
+                        field: 'id',
+                        values: !isNaN(roleId) ? [roleId] : roleId
+                    });
+                },
+                error: function (data, status) {
+                    toastr.error("删除失败，请检查网络和服务器运行情况！");
+                }
+            });
+
+        }
+        );
+    }
+
+    // 新增角色
+    function showAddRoleForm() {
+        $('#form_role_add').modal().css({
+            "margin-top": function () {
+                return ($(this).height() / 3);
+            }
+        });
+    }
+
+
+    //添加角色
+    function addRole() {
+        $.post("/role",
+            {
+                id: $("#txt_role_id_add").val(),
+                name: $("#txt_role_name_add").val(),
+                desc: $("#txt_role_desc_add").val()
+            },
+            function (data, status) {
+                if (status != "success") {
+                    toastr.error("保存失败，请检查网络和服务器运行情况！");
+                    return;
+                }
+                if (data.code != 200) {
+                    toastr.error(data.msg);
+                    return;
+                }
+                toastr.success(data.msg);
+                hideAddUserForm();
+                $("#table_role").bootstrapTable("refresh");
+            }
+        );
+    }
+
+
+
+
 </script>
+
+
+
+
+</html>
+
+
+
+
+
