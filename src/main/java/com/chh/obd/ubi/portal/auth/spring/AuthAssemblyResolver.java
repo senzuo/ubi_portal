@@ -1,11 +1,13 @@
 package com.chh.obd.ubi.portal.auth.spring;
 
-import com.chinaj.portal.auth.AuthorityValidException;
-import com.chinaj.portal.auth.annotation.Auth;
-import com.chinaj.portal.auth.annotation.AuthModule;
-import com.chinaj.portal.auth.model.Authority;
-import com.chinaj.portal.auth.model.AuthorityModule;
-import com.chinaj.portal.auth.service.AuthService;
+
+import com.chh.obd.ubi.portal.auth.AuthorityValidException;
+import com.chh.obd.ubi.portal.auth.annotation.Auth;
+import com.chh.obd.ubi.portal.auth.annotation.AuthModule;
+import com.chh.obd.ubi.portal.menu.spring.MenuResolver;
+import com.chh.obd.ubi.support.auth.model.Authority;
+import com.chh.obd.ubi.support.auth.model.AuthorityModule;
+import com.chh.obd.ubi.support.auth.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

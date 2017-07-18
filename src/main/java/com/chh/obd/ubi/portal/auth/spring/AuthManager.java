@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.chh.obd.ubi.support.auth.model.Authority;
+import com.chh.obd.ubi.support.auth.service.AuthService;
+import com.chh.obd.ubi.support.common.cache.CacheFactory;
+import com.chh.obd.ubi.support.common.cache.MapCache;
+import com.chh.obd.ubi.support.role.model.Role;
+import com.chh.obd.ubi.support.role.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,12 +32,12 @@ public class AuthManager implements InitializingBean {
     /**
      * <roleId,Map<authCode,Authority>>
      */
-    private MapCache<Integer, Map<String, Authority>> roleAuthCache = null;
+    private MapCache<Long, Map<String, Authority>> roleAuthCache = null;
 
     /**
      * <userId,Map<roleId,Role>>
      */
-    private MapCache<String, Map<Integer, Role>> userRoleCache = null;
+    private MapCache<Long, Map<Long, Role>> userRoleCache = null;
 
     // /**
     // * userId,Map<authCode,Authority>>
@@ -111,16 +117,16 @@ public class AuthManager implements InitializingBean {
      * 一次性加载所有用户权限到缓存中
      */
     protected synchronized void loadAllAuth() {
-        Map<Integer, Map<String, Authority>> roleAuthMap = authService.getAllRoleAuthorityMap();
+        Map<Long, Map<String, Authority>> roleAuthMap = authService.getAllRoleAuthorityMap();
         log.info("加载到{}个角色权限信息", roleAuthMap.size());
         roleAuthCache.putAll(roleAuthMap);
 
-        Map<String, Map<Integer, Role>> userRoleMap = roleService.getAllUserRoleMap();
+        Map<Long, Map<Long, Role>> userRoleMap = roleService.getAllUserRoleMap();
         log.info("加载了所有用户的角色信息");
         userRoleCache.putAll(userRoleMap);
 
         // for (String userId : userRoleCache.getAllKey()) {
-        // Map<Integer, Role> roles = userRoleCache.get(userId);
+        // Map<Long, Role> roles = userRoleCache.get(userId);
         // Map<String, Authority> userAuthSet = new HashMap<String,
         // Authority>();
         // for (Role role : roles.values()) {
@@ -140,7 +146,7 @@ public class AuthManager implements InitializingBean {
      *
      * @param roleId
      */
-    public void reloadRoleAuth(Integer roleId) {
+    public void reloadRoleAuth(Long roleId) {
         Map<String, Authority> roleAuthMap = authService.findAuthByRoleId(roleId);
         log.info("重载到[{}]角色权限信息", roleId);
         roleAuthCache.put(roleId, roleAuthMap);
@@ -149,11 +155,11 @@ public class AuthManager implements InitializingBean {
     /**
      * 从新加载用户角色
      *
-     * @param roleId
+     * @param userId
      */
-    public void reloadUserRole(String userId) {
+    public void reloadUserRole(Long userId) {
         List<Role> userRoles = roleService.findRoleByUserId(userId);
-        Map<Integer, Role> userRoleMap = new HashMap<>();
+        Map<Long, Role> userRoleMap = new HashMap<>();
         if (userRoles == null || userRoles.isEmpty()) {
             userRoleCache.put(userId, userRoleMap);
             return;
@@ -172,13 +178,13 @@ public class AuthManager implements InitializingBean {
      * @Description:获取用户权限集合
      * @author Niow
      */
-    public Map<String, Authority> getUserAuth(String userId) {
+    public Map<String, Authority> getUserAuth(long userId) {
         Map<String, Authority> userAuthorityMap = new HashMap<>();
-        Map<Integer, Role> userRoleMap = userRoleCache.get(userId);
+        Map<Long, Role> userRoleMap = userRoleCache.get(userId);
         if (userRoleMap == null || userRoleMap.isEmpty()) {
             return userAuthorityMap;
         }
-        for (Integer roleId : userRoleMap.keySet()) {
+        for (Long roleId : userRoleMap.keySet()) {
             Map<String, Authority> authorityMap = roleAuthCache.get(roleId);
             if (authorityMap == null || authorityMap.isEmpty()) {
                 continue;
@@ -194,7 +200,7 @@ public class AuthManager implements InitializingBean {
      * @Description: 获取角色权限集合
      * @author Niow
      */
-    public Map<String, Authority> getRoleAuth(int roleId) {
+    public Map<String, Authority> getRoleAuth(Long roleId) {
         return roleAuthCache.get(roleId);
     }
 
@@ -205,8 +211,8 @@ public class AuthManager implements InitializingBean {
      * @Description: 检测用户是否拥有指定角色
      * @author Niow
      */
-    public boolean checkUserRole(String userId, int roleId) {
-        Map<Integer, Role> roleMap = userRoleCache.get(userId);
+    public boolean checkUserRole(Long userId, int roleId) {
+        Map<Long, Role> roleMap = userRoleCache.get(userId);
         if (roleMap == null || roleMap.isEmpty()) {
             return false;
         }
@@ -220,12 +226,12 @@ public class AuthManager implements InitializingBean {
      * @Description: 检测用户是否拥有指定权限, 通过遍历角色对应的权限判断
      * @author Niow
      */
-    public boolean checkAuth(String authCode, String userId) {
-        Map<Integer, Role> userRoleMap = userRoleCache.get(userId);
+    public boolean checkUserAuth(String authCode, Long userId) {
+        Map<Long, Role> userRoleMap = userRoleCache.get(userId);
         if (userRoleMap == null || userRoleMap.isEmpty()) {
             return false;
         }
-        for (Integer roleId : userRoleMap.keySet()) {
+        for (Long roleId : userRoleMap.keySet()) {
             Map<String, Authority> authorityMap = roleAuthCache.get(roleId);
             if (authorityMap == null || authorityMap.isEmpty()) {
                 continue;
@@ -244,7 +250,7 @@ public class AuthManager implements InitializingBean {
      * @Description: 检测角色是否拥有指定权限
      * @author Niow
      */
-    public boolean checkAuth(String authCode, int roleId) {
+    public boolean checkRoleAuth(String authCode, Long roleId) {
         Map<String, Authority> authorityMap = roleAuthCache.get(roleId);
         if (authorityMap == null || authorityMap.isEmpty()) {
             return false;

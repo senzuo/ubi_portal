@@ -5,13 +5,18 @@ package com.chh.obd.ubi.portal.common.response;
  */
 public enum RestCode {
 
+    /** 200-299:操作成功返回类型*/
     SUCCESS(200, "请求成功"),
-    OPTION_INCORRECT(300,"此操作不正确"),
+    /** 300-399:请求参数不完整或不正确*/
+    OPTION_INCORRECT(300,"请求的目标内容不完整"),
     LOGIN_INVALID(301,"账号或密码不正确"),
-    TARGET_IS_NULL(400, "请求内容不存在"),
-    TARGET_IS_INCOMPLETE(401,"请求的目标内容不完整"),
-    TARGET_EXISTED(402,"对象已经存在"),
-    OPENID_LACK(403,"缺少openid"),
+    /** 400-499:请求资源不正确*/
+    TARGET_IS_INCOMPLETE(400,"操作不正确"),
+    TOKEN_LACK(401,"需要登录"),
+    OPTION_FORBIDDEN(403,"没有操作权限"),
+    TARGET_IS_NULL(404, "请求内容不存在"),
+    TARGET_EXISTED(409,"对象已经存在"),
+    /** 500:服务器异常*/
     ERROR(500,"服务器执行操作发生异常");
 
     RestCode(int code, String msg) {
