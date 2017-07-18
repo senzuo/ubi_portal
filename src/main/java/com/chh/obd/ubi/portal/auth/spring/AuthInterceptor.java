@@ -1,13 +1,12 @@
 package com.chh.obd.ubi.portal.auth.spring;
 
 import com.alibaba.fastjson.JSON;
-import com.chinaj.portal.auth.AuthManager;
-import com.chinaj.portal.auth.annotation.Auth;
-import com.chinaj.webframework.base.enums.StatusEnum;
-import com.chinaj.webframework.utils.TokenUtil;
-import com.chinaj.webframework.vo.AppResult;
-import com.chinaj.webframework.vo.Result;
-import com.chinaj.webframework.vo.Token;
+import com.chh.obd.ubi.portal.auth.annotation.Auth;
+import com.chh.obd.ubi.portal.common.response.RestCode;
+import com.chh.obd.ubi.portal.common.response.RestResponse;
+import com.chh.obd.ubi.portal.common.response.RestUtil;
+import com.chh.obd.ubi.portal.common.token.Token;
+import com.chh.obd.ubi.portal.common.token.TokenUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +42,11 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         boolean isRestful = false;
-        if (handlerMethod.getReturnType().equals(AppResult.class) || handlerMethod.getReturnType().equals(Result.class)) {
+        if (handlerMethod.getReturnType().equals(RestResponse.class)) {
             isRestful = true;
         }
-        Token token = TokenUtil.getCookieUser(httpServletRequest);
-        AppResult rs = new AppResult();
+        Token token = TokenUtil.getUser(httpServletRequest);
+        RestResponse rs = RestUtil.getResponse();
         if (token == null) {
             if (log.isDebugEnabled()) {
                 log.debug("没有该用户登录信息");
@@ -60,8 +59,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             if (log.isDebugEnabled()) {
                 log.debug("用户:{}无权限访问被拦截:{}", token.getUserId(), authCode);
             }
-            rs.setStatus(StatusEnum.FAIL.getValue());
-            rs.setError("没有访问权限");
+            rs.setRestCode(RestCode.OPTION_FORBIDDEN);
             response(isRestful, rs, httpServletResponse);
             return false;
         }
@@ -73,18 +71,18 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * 回写json数据
-     * 
+     *
      * @param restResponse
      * @param response
      * @throws IOException
      */
-    private void writeBackJson(AppResult restResponse, HttpServletResponse response) throws IOException {
+    private void writeBackJson(RestResponse restResponse, HttpServletResponse response) throws IOException {
         String json = JSON.toJSONString(restResponse);
         response.setHeader("Content-Type", "application/json;charset=UTF-8");
         IOUtils.write(json.getBytes(), response.getWriter());
     }
 
-    private void response(boolean isRestful, AppResult restResponse, HttpServletResponse response) {
+    private void response(boolean isRestful, RestResponse restResponse, HttpServletResponse response) {
         try {
             if (isRestful) {
                 writeBackJson(restResponse, response);

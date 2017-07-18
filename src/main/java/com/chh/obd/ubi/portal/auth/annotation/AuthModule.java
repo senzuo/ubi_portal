@@ -1,6 +1,8 @@
 package com.chh.obd.ubi.portal.auth.annotation;
 
 
+import com.chh.obd.ubi.support.auth.model.AuthorityModule;
+
 import java.lang.annotation.*;
 
 /**

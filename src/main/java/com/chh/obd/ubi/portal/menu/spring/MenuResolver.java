@@ -1,8 +1,10 @@
 package com.chh.obd.ubi.portal.menu.spring;
 
-import com.chinaj.portal.auth.annotation.Auth;
-import com.chinaj.portal.auth.model.Menu;
-import com.chinaj.portal.auth.service.MenuService;
+import com.chh.obd.ubi.portal.auth.annotation.Auth;
+import com.chh.obd.ubi.portal.auth.spring.AuthAssemblyResolver;
+
+import com.chh.obd.ubi.support.menu.model.Menu;
+import com.chh.obd.ubi.support.menu.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Admin on 2017/4/1.
+ * Created by Niow on 2017/4/1.
  */
 @Component
 public class MenuResolver {
@@ -48,7 +50,7 @@ public class MenuResolver {
             controllerUrl = controllerUrl == null ? "" : controllerUrl.trim();
         }
         for (Method method : methods) {
-            com.chinaj.portal.auth.annotation.Menu menuAnno = method.getAnnotation(com.chinaj.portal.auth.annotation.Menu.class);
+            com.chh.obd.ubi.portal.menu.annotation.Menu  menuAnno = method.getAnnotation(com.chh.obd.ubi.portal.menu.annotation.Menu .class);
             if (menuAnno == null) {
                 continue;
             }
@@ -56,7 +58,7 @@ public class MenuResolver {
             menu.setEnable(true);
             menu.setTitle(menuAnno.title());
             menu.setOrderIndex(0);
-            menu.setPid(0);
+            menu.setPid(0L);
             if (menuAnno.url() != null && !menuAnno.url().trim().equals("")) {
                 log.debug("解析到目录:{},路径:{}", menuAnno.title(), menuAnno.url());
                 menu.setUrl(menuAnno.url());
@@ -84,7 +86,7 @@ public class MenuResolver {
 
     /**
      * 比较库里已有的目录和扫描到的目录，去掉重复的，保留新增的
-     * 
+     *
      * @param menuList
      *            扫描到的目录列表
      * @return
