@@ -273,6 +273,7 @@
                     }
                 });
                 hideUpdateroleForm();
+                $("#table_role").bootstrapTable("refresh");
             },
             error: function (data, status) {
                 toastr.error("保存失败，请检查网络和服务器运行情况！");
@@ -325,6 +326,7 @@
             $.ajax({
                 url: "/role/" + roleId,
                 type: "delete",
+                dataType:"json",
                 success: function (data, status) {
                     if (status != "success") {
                         toastr.error("删除失败，请检查网络和服务器运行情况！");
@@ -361,15 +363,18 @@
 
     //添加角色
     function addRole() {
-        $.post("/role",
-            {
+        $.ajax({
+            url: "/role",
+            type: "post",
+            dataType:"json",
+            data: {
                 id: $("#txt_role_id_add").val(),
                 name: $("#txt_role_name_add").val(),
                 desc: $("#txt_role_desc_add").val()
             },
-            function (data, status) {
+            success: function (data, status) {
                 if (status != "success") {
-                    toastr.error("保存失败，请检查网络和服务器运行情况！");
+                    toastr.error("删除失败，请检查网络和服务器运行情况！");
                     return;
                 }
                 if (data.code != 200) {
@@ -377,10 +382,44 @@
                     return;
                 }
                 toastr.success(data.msg);
-                hideAddUserForm();
+                hideAddRoleForm();
                 $("#table_role").bootstrapTable("refresh");
+                $("#table_role").bootstrapTable('remove', {
+                    field: 'id',
+                    values: !isNaN(roleId) ? [roleId] : roleId
+                });
+            },
+            error: function (data, status) {
+                toastr.error("删除失败，请检查网络和服务器运行情况！");
             }
-        );
+        });
+//        $.post("/role",
+//            {
+//                id: $("#txt_role_id_add").val(),
+//                name: $("#txt_role_name_add").val(),
+//                desc: $("#txt_role_desc_add").val()
+//            },
+//            function (data, status) {
+//                if (status != "success") {
+//                    toastr.error("保存失败，请检查网络和服务器运行情况！");
+//                    return;
+//                }
+//                if (data.code != 200) {
+//                    toastr.error(data.msg);
+//                    return;
+//                }
+//                toastr.success(data.msg);
+//                hideAddRoleForm();
+//                $("#table_role").bootstrapTable("refresh");
+//            }
+//        );
+    }
+
+    function hideAddRoleForm() {
+        $('#form_role_add').modal('hide');
+        $("#txt_role_id_update").val("");
+        $("#txt_role_name_update").val("");
+        $("#txt_role_desc_update").val("");
     }
 
 
