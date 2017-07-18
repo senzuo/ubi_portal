@@ -3,10 +3,13 @@ package com.chh.obd.ubi.portal.role;
 import com.chh.obd.ubi.portal.common.response.RestCode;
 import com.chh.obd.ubi.portal.common.response.RestResponse;
 import com.chh.obd.ubi.portal.common.response.RestUtil;
+import com.chh.obd.ubi.portal.test.User;
 import com.chh.obd.ubi.support.common.page.Page;
 import com.chh.obd.ubi.support.role.model.Role;
 import com.chh.obd.ubi.support.role.model.RoleDTO;
 import com.chh.obd.ubi.support.role.service.RoleService;
+import com.chh.obd.ubi.support.user.model.UserDTO;
+import com.chh.obd.ubi.support.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,9 @@ public class RoleRestController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/getAllRole")
     public RestResponse getAllRole(Page page, RoleDTO roleDTO) {
@@ -89,4 +95,6 @@ public class RoleRestController {
         RestResponse response = RestUtil.getResponse();
         return response;
     }
+
+
 }
