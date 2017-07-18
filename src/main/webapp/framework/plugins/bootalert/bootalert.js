@@ -1,5 +1,4 @@
 (function ($) {
-
     window.bootalert = function () {
         var html = '<div id="[Id]" class="modal fade" role="dialog" aria-labelledby="modalLabel">' +
             '<div class="modal-dialog modal-sm">' +
@@ -135,7 +134,6 @@
                     }
                 }, options || {});
                 var modalId = generateId();
-
                 var content = dialogdHtml.replace(reg, function (node, key) {
                     return {
                         Id: modalId,
@@ -145,12 +143,15 @@
                 $('body').append(content);
                 var target = $('#' + modalId);
                 target.find('.modal-body').load(options.url);
-                if (options.onReady())
+                if (options.onReady()) {
                     options.onReady.call(target);
+                }
+
                 target.modal();
                 target.on('shown.bs.modal', function (e) {
-                    if (options.onReady(e))
+                    if (options.onReady(e)) {
                         options.onReady.call(target, e);
+                    }
                 });
                 target.on('hide.bs.modal', function (e) {
                     $('body').find(target).remove();

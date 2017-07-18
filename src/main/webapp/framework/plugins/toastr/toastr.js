@@ -432,4 +432,18 @@
     } else {
         window.toastr = factory(window.jQuery);
     }
+    toastr.options = {
+        closeButton: false,
+        debug: false,
+        progressBar: false,
+        positionClass: "toast-center-center",
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "800",
+        timeOut: "3000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut"
+    };
 }));
