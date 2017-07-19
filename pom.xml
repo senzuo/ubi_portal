@@ -125,16 +125,6 @@
             <artifactId>commons-io</artifactId>
             <version>1.4</version>
         </dependency>
-
-
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>localRepository</id>
-            <url>file:C:\Users\13722/IdeaProjects\apache-maven-mvnRespo\repository</url>
-        </repository>
-    </distributionManagement>
-
 
 </project>
