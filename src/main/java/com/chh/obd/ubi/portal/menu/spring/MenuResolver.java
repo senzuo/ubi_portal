@@ -1,8 +1,9 @@
+/*
 package com.chh.obd.ubi.portal.menu.spring;
+
 
 import com.chh.obd.ubi.portal.auth.annotation.Auth;
 import com.chh.obd.ubi.portal.auth.spring.AuthAssemblyResolver;
-
 import com.chh.obd.ubi.support.menu.model.Menu;
 import com.chh.obd.ubi.support.menu.service.MenuService;
 import org.slf4j.Logger;
@@ -19,9 +20,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
- * Created by Niow on 2017/4/1.
- */
+ * Created by Admin on 2017/4/1.
+ *//*
+
 @Component
 public class MenuResolver {
 
@@ -50,7 +53,7 @@ public class MenuResolver {
             controllerUrl = controllerUrl == null ? "" : controllerUrl.trim();
         }
         for (Method method : methods) {
-            com.chh.obd.ubi.portal.menu.annotation.Menu  menuAnno = method.getAnnotation(com.chh.obd.ubi.portal.menu.annotation.Menu .class);
+            com.chh.obd.ubi.portal.menu.annotation.Menu menuAnno = method.getAnnotation(com.chh.obd.ubi.portal.menu.annotation.Menu.class);
             if (menuAnno == null) {
                 continue;
             }
@@ -84,13 +87,15 @@ public class MenuResolver {
         menuService.addAllMenu(menuList);
     }
 
-    /**
+    */
+/**
      * 比较库里已有的目录和扫描到的目录，去掉重复的，保留新增的
-     *
+     * 
      * @param menuList
      *            扫描到的目录列表
      * @return
-     */
+     *//*
+
     protected List<Menu> compareMenu(List<Menu> menuList) {
         List<Menu> allMenu = menuService.getAllMenu();
         if (allMenu == null || allMenu.isEmpty()) {
@@ -116,3 +121,4 @@ public class MenuResolver {
         this.menuService = menuService;
     }
 }
+*/
