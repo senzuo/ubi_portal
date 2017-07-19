@@ -23,13 +23,16 @@ function initAuthModuleTable() {
             $('#table_auth').bootstrapTable("load", m.authorityList);
             // initAuthTable(authModules[m]);
         },
+        onClickCell:function (field, value, row, $element) {
+            $(".selected").removeClass("selected");
+            $element.addClass("selected");
+        },
         columns: [
             {
                 field: 'description',
                 align: 'center',
                 class: 'col-md-1',
                 valign: 'middle'
-
             }
             ]
         ,onLoadSuccess:function (data) {
@@ -48,6 +51,7 @@ function initAuthTable(authModule) {
     $authTable.bootstrapTable(
         {
             data:authModule.authorityList,
+            striped:true,
             columns: [
                 {
                     field: 'description',
