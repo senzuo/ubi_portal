@@ -53,11 +53,9 @@ public class MenuRestController {
         if (menuDTO == null) {
             menuDTO = new MenuDTO();
         }
-        System.out.println("???????????????????");
         Page<Menu> menuPage = menuService.getChildrenMenu(page, menuDTO,id);
         RestResponse response = RestUtil.getResponse();
         response.setData(menuPage);
-        System.out.println("?????????????????????");
         return response;
     }
 }
