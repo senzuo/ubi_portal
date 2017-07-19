@@ -9,10 +9,7 @@ import com.chh.obd.ubi.support.menu.model.MenuDTO;
 import com.chh.obd.ubi.support.menu.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jws.soap.SOAPBinding;
 
@@ -36,6 +33,8 @@ public class MenuRestController {
         response.setData(menu);
         return response;
     }
+
+
     @RequestMapping("/page")
     public RestResponse getMenuPage(Page page, MenuDTO menuDTO){
         if (page == null) page = new Page();
@@ -57,5 +56,21 @@ public class MenuRestController {
         RestResponse response = RestUtil.getResponse();
         response.setData(menuPage);
         return response;
+    }
+
+    @RequestMapping(value = "",method =RequestMethod.POST )
+    public void addMenu(@RequestParam String name, @RequestParam String icon, @RequestParam int order_index){
+        Menu menu = new Menu();
+        if(name!=null){
+
+            menu.setTitle(name);
+        }
+        if(icon != null){
+            menu.setIcon(icon);
+        }
+        if(order_index >= 0){
+            menu.setOrderIndex(order_index);
+        }
+        menuService.addMenu(menu);
     }
 }
