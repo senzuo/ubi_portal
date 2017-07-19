@@ -3,11 +3,12 @@ package com.chh.obd.ubi.portal.role;
 import com.chh.obd.ubi.portal.common.response.RestCode;
 import com.chh.obd.ubi.portal.common.response.RestResponse;
 import com.chh.obd.ubi.portal.common.response.RestUtil;
-import com.chh.obd.ubi.portal.test.User;
 import com.chh.obd.ubi.support.common.page.Page;
 import com.chh.obd.ubi.support.role.model.Role;
 import com.chh.obd.ubi.support.role.model.RoleDTO;
+import com.chh.obd.ubi.support.role.model.UserRoleMapping;
 import com.chh.obd.ubi.support.role.service.RoleService;
+import com.chh.obd.ubi.support.user.model.User;
 import com.chh.obd.ubi.support.user.model.UserDTO;
 import com.chh.obd.ubi.support.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class RoleRestController {
 
     @Autowired
     private UserService userService;
+
 
     @RequestMapping("/getAllRole")
     public RestResponse getAllRole(Page page, RoleDTO roleDTO) {
@@ -93,6 +95,43 @@ public class RoleRestController {
             e.printStackTrace();
         }
         RestResponse response = RestUtil.getResponse();
+        return response;
+    }
+
+    /**
+     * 给用户添加角色
+     *
+     * @return
+     */
+    @RequestMapping(value = "/AddUser", method = RequestMethod.POST)
+    public RestResponse addUserToRole(@RequestParam Long roleId, @RequestParam String userId) {
+        try {
+            roleService.addUserToRole(userId,roleId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        RestResponse response = RestUtil.getResponse();
+        return response;
+    }
+
+    /**
+     * 查询已经添加该角色的用户
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value = "/addedUser")
+    public RestResponse getAddedRole(@RequestParam Long roleId, Page page){
+
+        if (page == null) page = new Page();
+
+        List<User> users = roleService.findUsersByRoleId(roleId);
+
+        Page<User> pageUser = new Page<>();
+
+        pageUser.setDatas(users);
+
+        RestResponse response = RestUtil.getResponse();
+        response.setData(pageUser);
         return response;
     }
 
