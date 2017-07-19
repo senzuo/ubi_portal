@@ -19,11 +19,8 @@ function initAuthModuleTable() {
         //     return params;
         // },
         onClickRow:function (row, $element) {
-            alert("good");
             var m = authModules[row.moduleCode];
-            $('#table_auth').bootstrapTable("refresh",{
-                data:authModules[m]
-            });
+            $('#table_auth').bootstrapTable("load", m.authorityList);
             // initAuthTable(authModules[m]);
         },
         columns: [
