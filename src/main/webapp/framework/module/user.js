@@ -10,7 +10,7 @@ function initTable() {
         sidePagination: "server",
         url: "/user/page",
         toolbar: "#tableToolbar",
-        dataField: "data.datas",
+        dataField: "data.entities",
         pageSize: "10",
         clickToSelect: true,
         queryParamsType: "limit",
