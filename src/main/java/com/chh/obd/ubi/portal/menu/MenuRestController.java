@@ -9,10 +9,7 @@ import com.chh.obd.ubi.support.menu.model.MenuDTO;
 import com.chh.obd.ubi.support.menu.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jws.soap.SOAPBinding;
 
@@ -23,11 +20,12 @@ import javax.jws.soap.SOAPBinding;
 @RequestMapping("/menu")
 public class MenuRestController {
     @Autowired
+    private Menu menu;
+    @Autowired
     private MenuService menuService;
     @RequestMapping("/search")
     public RestResponse search(Long id){
-
-        Menu menu = menuService.getMenuById(id);
+        menu = menuService.getMenuById(id);
         RestResponse response = RestUtil.getResponse();
         if (menu == null) {
             response.setRestCode(RestCode.TARGET_IS_NULL);
@@ -36,6 +34,8 @@ public class MenuRestController {
         response.setData(menu);
         return response;
     }
+
+
     @RequestMapping("/page")
     public RestResponse getMenuPage(Page page, MenuDTO menuDTO){
         if (page == null) page = new Page();
@@ -57,5 +57,47 @@ public class MenuRestController {
         RestResponse response = RestUtil.getResponse();
         response.setData(menuPage);
         return response;
+    }
+
+    @RequestMapping(value = "",method =RequestMethod.POST )
+    public void addMenu(@RequestParam String name, @RequestParam String icon, @RequestParam int order_index){//这里是通过名字对应的，
+        menu = new Menu();
+        if(name!=null){
+
+            menu.setTitle(name);
+        }
+        if(icon != null){
+            menu.setIcon(icon);
+        }
+        if(order_index >= 0){
+            menu.setOrderIndex(order_index);
+        }
+        menu.setPid(-1L);
+        menuService.addMenu(menu);
+    }
+    @RequestMapping(value="/delete")
+    public void deleteChildrenMenu(@RequestParam Long id){
+        menuService.deleteChildrenMenu(id);
+
+    }
+
+    @RequestMapping(value="/update",method = RequestMethod.PUT)
+    public RestResponse updateParetMenu(@RequestParam Long id,@RequestParam String title,@RequestParam int order_index,@RequestParam String icon){
+        menu = new Menu();
+        if(title != null) {
+            menu.setTitle(title);
+        }
+        if(order_index >= 0){
+            menu.setOrderIndex(order_index);
+        }
+        if(icon != null){
+            menu.setIcon(icon);
+        }
+        menu.setId(id);
+        menu.setPid(-1L);
+        menuService.updateMenu(menu);
+        RestResponse response = RestUtil.getResponse();
+        return response;
+
     }
 }

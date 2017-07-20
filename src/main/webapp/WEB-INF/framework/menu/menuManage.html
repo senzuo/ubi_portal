@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>菜单管理</title>
     <div th:include="framework/main/commonStyle :: style"/>
+    <div th:include="framework/main/commonJs"::commonJs/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 
@@ -28,6 +29,7 @@
             </ol>
         </section>
 
+
         <!-- Main content -->
         <section class="content">
             <div class="row">
@@ -42,16 +44,18 @@
                         <div class="post_content">
                             姓名：<input type="text" id="searchbox" maxlength="8"/>
                             <button id="namesearch" type="button">查询</button>
-                        </div>
-                        <!--数据显示框-->
-                        <div class="box-body">
                             <div id="rootmenuToolbar" class="btn-group"><!--onclick就是代表一个动作，换言之就是应该执行一个函数，所以可能应该会对应函数-->
                                 <button id="menu_add" onclick="showAddMenuForm()" type="button" class="btn btn-default"><span
                                         class="glyphicon glyphicon-plus"
                                         aria-hidden="true"></span>新增
                                 </button>
                             </div>
+                        </div>
+                        <!--数据显示框-->
+                        <div class="box-body">
+
                             <table id="table_menu" class="table table-bordered table-hover">
+
                             </table>
                         </div>
                     </div>
@@ -62,6 +66,9 @@
                         <div class="box-header">
                             <h3 class="box-title">子菜单列表</h3>
                         </div>
+                        <div class="post_content">
+                            <label>   </label>
+                        </div>
                         <!--子菜单数据显示-->
                         <div class="box-body">
                             <table id="table_children_menu" class="table table-bordered table-hover">
@@ -71,6 +78,7 @@
                 </div>
             </div>
         </section>
+
         <!--菜单编辑表格-->
         <div class="modal" id="form_edit">
             <div class="modal-dialog" role="document">
@@ -157,6 +165,9 @@
                 </div>
             </div>
         </div>
+
+
+
     </div>
     <div th:include="framework/main/mainBottom :: copyright"/>
     <script src="/framework/module/menu.js"></script>
@@ -172,6 +183,6 @@
     </script>
 </div>
 </body>
-<div th:include="framework/main/commonJs"::commonJs/>
+
 
 <html/>
