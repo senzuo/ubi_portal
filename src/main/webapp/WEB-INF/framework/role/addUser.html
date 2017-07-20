@@ -86,7 +86,7 @@
                 pageList: "[10, 20, 30, ALL]",
                 sidePagination: "server",
                 url: "/user/page",
-                dataField: "data.datas",
+                dataField: "data.entities",
                 pageSize: "10",
                 clickToSelect: true,
                 queryParamsType: "limit",
@@ -153,13 +153,13 @@
                 pageList: "[10, 20, 30, ALL]",
                 sidePagination: "server",
                 url: "/role/addedUser",
-                dataField: "data.datas",
+                dataField: "data.entities",
                 pageSize: "10",
                 clickToSelect: true,
                 queryParamsType: "limit",
                 onLoadSuccess:function (data) {
-                    for (var i = 0; i < data.data.datas.length; i++) {
-                        addedUser[data.data.datas[i].id] = data.data.datas[i];
+                    for (var i = 0; i < data.data.entities.length; i++) {
+                        addedUser[data.data.entities[i].id] = data.data.entities[i];
                     }
                     initAllUserTable();
                 },
@@ -188,6 +188,23 @@
                         align: 'center',
                         class: 'col-md-3',
                         valign: 'middle'
+                    }, {
+                        field: 'option',
+                        align: 'center',
+                        events: {
+                            'click .updateAuth': function (e, value, row, index) {
+                                removeRoleforUser(row.id);
+                            }
+                        },
+                        formatter: function (value, row, index) {
+                            return [
+                                '<a class="updateAuth" href="javascript:void(0)" title="修改权限">',
+                                '<i class="glyphicon glyphicon-copy"></i>',
+                                '</a>&nbsp;&nbsp;&nbsp;'
+
+                            ].join('');
+                        },
+                        title: '移除'
                     }]
             });
             return $table;
@@ -213,6 +230,37 @@
                         return;
                     }
                     toastr.success(data.msg);
+                    initAddedUserTable();
+                    $("#added_user").bootstrapTable("refresh");
+                    $("#all_user").bootstrapTable("refresh");
+                },
+                error: function (data, status) {
+                    toastr.error("保存失败，请检查网络和服务器运行情况！");
+                }
+            });
+        }
+
+        /**
+         * 将用户从角色中移除
+         * @param userid
+         */
+        function removeRoleforUser(userid) {
+            var roleid =document.getElementById("roleId").innerText;
+            $.ajax({
+                url: "/role/removeUser",
+                type: "delete",
+                dataType:"json",
+                data: {
+                    userId: userid,
+                    roleId: roleid
+                },
+                success: function (data) {
+                    if (data.code != 200) {
+                        toastr.error(data.msg);
+                        return;
+                    }
+                    toastr.success(data.msg);
+                    initAddedUserTable();
                     $("#added_user").bootstrapTable("refresh");
                     $("#all_user").bootstrapTable("refresh");
                 },
