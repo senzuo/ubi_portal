@@ -1,17 +1,22 @@
 /**
  * Created by niow on 16/4/5.
  */
+/*加载父菜单*/
 function initTable() {
     var $table = $('#table_menu');
     $table.bootstrapTable({
         pagination: "true",
-        pageList: "[10, 20, 30, ALL]",
+        pageList: "[5, 10, 20, ALL]",
         sidePagination: "server",
         url: "/menu/page",
         toolbar: "#tableToolbar",
-        dataField: "data.datas",
-        pageSize: "10",
+        dataField: "data.entities",
+        pageSize: "5",
         onClickRow: showChildrenMenu,
+        onClickCell:function (field, value, row, $element) {
+            $(".selected").removeClass("selected");
+            $element.addClass("selected");
+        },
         queryParamsType: "limit",
         queryParams: function (params) {
             params.id = $("#searchbox").val();
@@ -20,8 +25,8 @@ function initTable() {
             return params;
         },
         onLoadSuccess:function (data) {
-            var firstMenu = data.data.datas[0];
-            initChildrenMenu(firstMenu);
+            var firstMenu = data.data.entities[0];
+            initChildrenMenu(firstMenu);/*这里传入的是一条记录，对应于类就是一个对象，这个是从后台传到页面的json里拿的*/
         },
         columns: [
             {
@@ -44,6 +49,7 @@ function initTable() {
                 events: {
                     'click .like': function (e, value, row, index) {
                         $("#form_edit").modal();
+                        showInformation(row,index);
                     }
                 },
                 formatter: function (value, row, index) {
@@ -58,25 +64,22 @@ function initTable() {
     });
     return $table;
 }
-function showAddMenuForm() {
-    $('#form_menu_add').modal().css({
-        "margin-top": function () {
-            return ($(this).height() / 12);
-        }
-    });
-}
 
+
+
+
+/*显示子菜单数据*/
 function initChildrenMenu(row, $element){
     var id = row.id;
     $("#table_children_menu").bootstrapTable({
         pagination: "true",
-        pageList: "[10, 20, 30, ALL]",
+        pageList: "[5, 10, 20, ALL]",
         sidePagination: "server",
         toolbar: "#tableToolbar",
-        pageSize: "10",
+        pageSize: "5",
         url:"/menu/" + id,
         clickToSelect: true,
-        dataField: "data.datas",
+        dataField: "data.entities",
         columns:[
             {
                 field: 'title',
@@ -125,13 +128,9 @@ function showChildrenMenu(row, $element) {
 }
 
 
-function hideAddUserForm() {
-    $('#form_menu_add').modal('hide');
-    $("#txt_menu_name_add").val("");
-    $("#txt_menu_icon_add").val("");
-    $("#txt_menu_order_index_add").val("");
-}
 
+
+/*删除父菜单下的某个子菜单*/
 function deleteChildrenMenu(menuId) {
 
     swal({
@@ -143,43 +142,93 @@ function deleteChildrenMenu(menuId) {
         confirmButtonText: "确定删除",
         closeOnConfirm: true
     }, function () {
-        $.ajax({
-            url: "/menu/" + menuId,
-            type: "delete",
-            datatype:json,
-            success: function (data, status) {
-                if (status != "success") {
-                    toastr.error("删除失败，请检查网络和服务器运行情况！");
-                    return;
-                }
-                if (data.code != 200) {
-                    toastr.error(data.msg);
-                    return;
-                }
-                toastr.success(data.msg);
-                $("#tableUser").bootstrapTable('remove', {
-                    field: 'id',
-                    values: !isNaN(menuId) ? [menuId] : menuId
-                });
-            },
-            error: function (data, status) {
-                toastr.error("删除失败，请检查网络和服务器运行情况！");
+        $.post(
+            "/menu/delete",
+            {
+                id : menuId/*这里怎么用ajax实现*/
             }
-        });
-
+        )
+        $("#table_children_menu").bootstrapTable("refresh");
     });
 }
 
-function addMenu() {
 
+
+
+/*添加父菜单*/
+function addMenu() {
     $.post(
         "/menu",
         {
             name: $("#txt_menu_name_add").val(),
-            idCardNo: $("#txt_menu_icon_add").val(),
-            mobile: $("#txt_menu_order_index_add").val()
+            icon: $("#txt_menu_icon_add").val(),
+            order_index: $("#txt_menu_order_index_add").val()
         }
     )
-    hideAddUserForm();
-    $("#table_menu").bootstrapTable("refresh");
+    hideAddMenuForm();
+    $("#table_menu").bootstrapTable("refresh",{url:"/menu/page"});
+}
+function hideAddMenuForm() {
+    $('#form_menu_add').modal('hide');
+    $("#txt_menu_name_add").val("");
+    $("#txt_menu_icon_add").val("");
+    $("#txt_menu_order_index_add").val("");
+}
+function showAddMenuForm() {
+    $('#form_menu_add').modal().css({
+        "margin-top": function () {
+            return ($(this).height() / 12);
+        }
+    });
+}
+
+
+/*编辑父菜单*/
+function showInformation(row,index) {
+
+    $("#txt_menu_id_edit").val(row.id);
+    $("#txt_menu_name_edit").val(row.title);
+    $("#txt_menu_order_index_edit").val(row.orderIndex);
+    $("#txt_menu_icon_edit").val(row.icon);
+
+}
+
+function hideUpdateMenuForm() {
+    $('#form_edit').modal('hide');
+    $("#txt_menu_name_edit").val("");
+    $("#txt_menu_order_index_edit").val("");
+    $("#txt_menu_icon_edit").val("");
+}
+
+function updateMenu() {
+    $.ajax({
+        url:"/menu/update",
+        type:"put",
+        datatype:"json",
+        data:{
+            id:$("#txt_menu_id_edit").val(),
+            title:$("#txt_menu_name_edit").val(),
+            order_index:$("#txt_menu_order_index_edit").val(),
+            icon:$("#txt_menu_icon_edit").val()
+        },
+        success:function (data,staus) {
+           /* if(staus != success){
+                toastr.error("更新失败");
+                return;
+            }
+            if(data.code != 200){
+                toastr.error(data.msg);
+                return;
+            }*/
+            toastr.success(data,staus);
+            $("#table_menu").bootstrapTable("refresh",{url:"/menu/page"})
+
+            hideUpdateMenuForm();
+
+        }
+
+
+
+
+    })
 }
