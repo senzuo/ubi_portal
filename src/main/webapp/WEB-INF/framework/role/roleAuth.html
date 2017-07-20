@@ -251,7 +251,7 @@
     function updaterole() {
         $.ajax({
             url: "/role/" + $("#txt_role_id_update").val(),
-            type: "put",
+            type: "post",
             dataType:"json",
             data: {
                 name: $("#txt_role_name_update").val(),
@@ -322,8 +322,8 @@
             closeOnConfirm: true
         }, function () {
             $.ajax({
-                url: "/role/" + roleId,
-                type: "delete",
+                url: "/role/del/" + roleId,
+                type: "post",
                 dataType:"json",
                 success: function (data, status) {
                     if (status != "success") {

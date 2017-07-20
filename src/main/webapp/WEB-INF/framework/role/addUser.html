@@ -248,7 +248,8 @@
             var roleid =document.getElementById("roleId").innerText;
             $.ajax({
                 url: "/role/removeUser",
-                type: "delete",
+                // DELETE 方法 无法接受参数   暂时更改为 POST方法
+                type: "post",
                 dataType:"json",
                 data: {
                     userId: userid,
