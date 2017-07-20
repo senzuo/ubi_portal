@@ -44,7 +44,7 @@ public class RoleRestController {
         return response;
     }
 
-    @RequestMapping(value = "/{roleId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{roleId}", method = RequestMethod.POST)
     public RestResponse updaterole(@PathVariable("roleId") Long Id,
                                    @RequestParam(required = false) String name,
                                    @RequestParam(required = false) String desc) {
@@ -71,11 +71,10 @@ public class RoleRestController {
         return response;
     }
 
-    @RequestMapping(value = "/{roleId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/del/{roleId}", method = RequestMethod.POST)
     public RestResponse deleteUser(@PathVariable("roleId") Long roleId) {
         RestResponse response = RestUtil.getResponse();
         try {
-
             roleService.deleteRole(roleId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +127,7 @@ public class RoleRestController {
 
         List<User> users = roleService.findUsersByRoleId(roleId,page);
 
-        page.setDatas(users);
+        page.setEntities(users);
 
 
         RestResponse response = RestUtil.getResponse();
@@ -136,5 +135,31 @@ public class RoleRestController {
         return response;
     }
 
+    // DELETE 方法 无法接受参数   暂时更改为 POST方法
+//    @RequestMapping(value = "/removeUser", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/removeUser", method = RequestMethod.POST)
+    public RestResponse removeUser(@RequestParam String userId,@RequestParam Long roleId) {
+//    public RestResponse removeUser(/*@RequestParam String userId,@RequestParam Long roleId*/) {
+
+//        System.out.println(roleId);
+//        System.out.println(roleId);
+//        System.out.println(roleId);
+//        System.out.println(roleId);
+//        System.out.println(roleId);
+//
+//        System.out.println(userId);
+//        System.out.println(userId);
+//        System.out.println(userId);
+//        System.out.println(userId);
+
+        RestResponse response = RestUtil.getResponse();
+        try {
+            roleService.removeUserFromRole(userId,roleId);
+//            roleService.removeUserFromRole("1",1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
 
 }
