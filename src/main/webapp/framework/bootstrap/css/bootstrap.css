@@ -2323,6 +2323,7 @@ th {
 }
 .table-hover > tbody > tr:hover {
   background-color: #efe5ff;
+  color:#000000;
 }
 
 table col[class*="col-"] {
@@ -6801,7 +6802,7 @@ button.close {
 /*# sourceMappingURL=bootstrap.css.map */
 
 /*defined color*/
-.selected{
+.line-selected{
     background-color: #3c8dbc;
     color:#eee;
 }

@@ -20,11 +20,12 @@ import javax.jws.soap.SOAPBinding;
 @RequestMapping("/menu")
 public class MenuRestController {
     @Autowired
+    private Menu menu;
+    @Autowired
     private MenuService menuService;
     @RequestMapping("/search")
     public RestResponse search(Long id){
-
-        Menu menu = menuService.getMenuById(id);
+        menu = menuService.getMenuById(id);
         RestResponse response = RestUtil.getResponse();
         if (menu == null) {
             response.setRestCode(RestCode.TARGET_IS_NULL);
@@ -59,8 +60,8 @@ public class MenuRestController {
     }
 
     @RequestMapping(value = "",method =RequestMethod.POST )
-    public void addMenu(@RequestParam String name, @RequestParam String icon, @RequestParam int order_index){
-        Menu menu = new Menu();
+    public void addMenu(@RequestParam String name, @RequestParam String icon, @RequestParam int order_index){//这里是通过名字对应的，
+        menu = new Menu();
         if(name!=null){
 
             menu.setTitle(name);
@@ -71,6 +72,32 @@ public class MenuRestController {
         if(order_index >= 0){
             menu.setOrderIndex(order_index);
         }
+        menu.setPid(-1L);
         menuService.addMenu(menu);
+    }
+    @RequestMapping(value="/delete")
+    public void deleteChildrenMenu(@RequestParam Long id){
+        menuService.deleteChildrenMenu(id);
+
+    }
+
+    @RequestMapping(value="/update",method = RequestMethod.PUT)
+    public RestResponse updateParetMenu(@RequestParam Long id,@RequestParam String title,@RequestParam int order_index,@RequestParam String icon){
+        menu = new Menu();
+        if(title != null) {
+            menu.setTitle(title);
+        }
+        if(order_index >= 0){
+            menu.setOrderIndex(order_index);
+        }
+        if(icon != null){
+            menu.setIcon(icon);
+        }
+        menu.setId(id);
+        menu.setPid(-1L);
+        menuService.updateMenu(menu);
+        RestResponse response = RestUtil.getResponse();
+        return response;
+
     }
 }
