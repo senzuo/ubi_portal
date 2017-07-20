@@ -120,18 +120,19 @@ public class RoleRestController {
      * @return
      */
     @RequestMapping(value = "/addedUser")
-    public RestResponse getAddedRole(@RequestParam Long roleId, Page page){
+    public RestResponse getAddedRole(@RequestParam Long roleId, Page page, UserDTO userDTO){
 
         if (page == null) page = new Page();
+        if (userDTO == null) userDTO = new UserDTO();
 
-        List<User> users = roleService.findUsersByRoleId(roleId);
 
-        Page<User> pageUser = new Page<>();
+        List<User> users = roleService.findUsersByRoleId(roleId,page);
 
-        pageUser.setDatas(users);
+        page.setDatas(users);
+
 
         RestResponse response = RestUtil.getResponse();
-        response.setData(pageUser);
+        response.setData(page);
         return response;
     }
 
