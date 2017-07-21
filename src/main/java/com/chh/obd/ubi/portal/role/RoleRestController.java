@@ -103,7 +103,7 @@ public class RoleRestController {
      * @return
      */
     @RequestMapping(value = "/AddUser", method = RequestMethod.POST)
-    public RestResponse addUserToRole(@RequestParam Long roleId, @RequestParam String userId) {
+    public RestResponse addUserToRole(@RequestParam Long roleId, @RequestParam Long userId) {
         try {
             roleService.addUserToRole(userId,roleId);
         }catch (Exception e){
@@ -138,24 +138,12 @@ public class RoleRestController {
     // DELETE 方法 无法接受参数   暂时更改为 POST方法
 //    @RequestMapping(value = "/removeUser", method = RequestMethod.DELETE)
     @RequestMapping(value = "/removeUser", method = RequestMethod.POST)
-    public RestResponse removeUser(@RequestParam String userId,@RequestParam Long roleId) {
+    public RestResponse removeUser(@RequestParam Long userId,@RequestParam Long roleId) {
 //    public RestResponse removeUser(/*@RequestParam String userId,@RequestParam Long roleId*/) {
-
-//        System.out.println(roleId);
-//        System.out.println(roleId);
-//        System.out.println(roleId);
-//        System.out.println(roleId);
-//        System.out.println(roleId);
-//
-//        System.out.println(userId);
-//        System.out.println(userId);
-//        System.out.println(userId);
-//        System.out.println(userId);
 
         RestResponse response = RestUtil.getResponse();
         try {
             roleService.removeUserFromRole(userId,roleId);
-//            roleService.removeUserFromRole("1",1L);
         } catch (Exception e) {
             e.printStackTrace();
         }
