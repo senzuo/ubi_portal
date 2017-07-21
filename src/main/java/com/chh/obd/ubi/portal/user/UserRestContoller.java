@@ -66,10 +66,10 @@ public class UserRestContoller {
     @RequestMapping("/page")
     public RestResponse getUserPage(Page page, UserDTO userDTO) {
         if (page == null) page = new Page();
-        if (userDTO == null) {
-            userDTO = new UserDTO();
-        }
+        if (userDTO == null) { userDTO = new UserDTO();  }
+
         Page<User> userPage = userService.getUserPage(page, userDTO);
+
         RestResponse response = RestUtil.getResponse();
         response.setData(userPage);
         return response;

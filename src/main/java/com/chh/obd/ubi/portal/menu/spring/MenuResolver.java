@@ -1,4 +1,3 @@
-/*
 package com.chh.obd.ubi.portal.menu.spring;
 
 
@@ -20,10 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-*/
 /**
  * Created by Admin on 2017/4/1.
- *//*
+ */
 
 @Component
 public class MenuResolver {
@@ -87,14 +85,13 @@ public class MenuResolver {
         menuService.addAllMenu(menuList);
     }
 
-    */
 /**
      * 比较库里已有的目录和扫描到的目录，去掉重复的，保留新增的
      * 
      * @param menuList
      *            扫描到的目录列表
      * @return
-     *//*
+     */
 
     protected List<Menu> compareMenu(List<Menu> menuList) {
         List<Menu> allMenu = menuService.getAllMenu();
@@ -121,4 +118,3 @@ public class MenuResolver {
         this.menuService = menuService;
     }
 }
-*/
