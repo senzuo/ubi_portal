@@ -1,17 +1,11 @@
 package com.chh.obd.ubi.portal.role;
 
-import com.chh.obd.ubi.support.common.page.Page;
-import com.chh.obd.ubi.support.role.service.RoleService;
-import com.chh.obd.ubi.support.user.model.User;
-import com.chh.obd.ubi.support.user.model.UserDTO;
-import com.chh.obd.ubi.support.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.chh.obd.ubi.portal.auth.annotation.Auth;
+import com.chh.obd.ubi.portal.auth.annotation.AuthModule;
+import com.chh.obd.ubi.portal.menu.annotation.Menu;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -19,20 +13,18 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/role")
+@AuthModule(code = "role_module", desc = "角色模块")
 public class RoleController {
 
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private UserService userService;
-
     @RequestMapping(value = "")
+    @Auth("角色管理页面")
+    @Menu(title = "角色管理")
     public String role(){
-        return "/framework/role/roleAuth";
+        return "framework/role/rolePage";
     }
 
     @RequestMapping("/addUser")
+    @Auth("添加用户到角色页面")
     public String roleAddUser(@RequestParam("roleId") Long id, Model model) {
 
         model.addAttribute("roleId",id);
